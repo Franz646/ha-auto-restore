@@ -1,0 +1,5 @@
+config.ini
+*.dpapi
+backup_key*
+*.tar
+__pycache__/
