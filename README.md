@@ -1,5 +1,7 @@
 # ha-auto-restore
 
+*[Leggi in italiano](README.it.md)*
+
 Bring a broken **Home Assistant OS** back from another computer with one command: restart it,
 restore the newest backup, or wipe it and restore your backup onto a fresh install - asking before
 every destructive step.
@@ -28,12 +30,14 @@ to a local emergency folder, useful if you keep it on the HA Samba share).
 ## Requirements
 
 - Python 3.9+ and OpenSSH client on the computer that runs it.
-- **SSH app** on HA ("Advanced SSH & Web Terminal" or "Terminal & SSH") with **key** login. Recommended:
+- **SSH app** on HA ("Advanced SSH & Web Terminal" or "Terminal & SSH") with **key** login. The user is
+  `root` for "Terminal & SSH" and the `username` set in the app options for "Advanced SSH". Recommended:
   an alias in `~/.ssh/config` with user, key and (on Windows OpenSSH, if you see "Corrupted MAC on
   input") explicit `Ciphers`/`MACs`.
 - **Backups**: automatic, **encrypted** HA backups copied **off the box** (NAS, cloud). The folder must be
   readable from this computer (on Windows, save the NAS credentials of a user that can read the share).
-- **The backup encryption key** (HA: Settings > System > Backups > encryption key, or the emergency kit).
+- **The backup encryption key**: in HA go to **Settings > System > Backups**, card **Encryption key**,
+  then **Show my encryption key** (or download the emergency kit). Keep a copy outside HA.
 - For `reinstall`: **HAOS system SSH on port 22222** (see below).
 - **Internet on the HA box during a restore**: the Supervisor refuses to restore without it.
 - For `upload`: **Home Assistant 2025.1 or newer** in the fresh install (it has the onboarding backup
@@ -61,7 +65,8 @@ instead of your disk, or make HAOS mount the wrong data partition. Wipe it compl
    - Windows: `powershell -ExecutionPolicy Bypass -File .\save_backup_key.ps1` (DPAPI, only your user
      on this PC can decrypt it);
    - elsewhere: `storage = prompt` (asked when needed) or `storage = file` with a `chmod 600` file.
-3. Check: `python ha_restore.py diagnose` and `python ha_restore.py where`.
+3. Check: `python ha_restore.py diagnose` and `python ha_restore.py where` (on Linux/macOS use `python3`,
+   or simply `./restore.sh diagnose`).
 4. Keep a copy of the tool on the computer itself (`python ha_restore.py sync`), not only on the HA share.
 
 ## Usage
@@ -101,12 +106,15 @@ VirtualBox works (Windows Home has no Hyper-V Manager):
    3 GB RAM, the disk on SATA, network **NAT** with port forwards to 80 and 8123. Start it and wait for
    the onboarding screen (10-25 min, the first boot downloads HA).
 2. **Isolate it before restoring**, or you get a second HA controlling your house: switch the NIC to
-   **host-only**, then on the VM console give it a static address, e.g.
+   **host-only**, then give it a static address. The VM console shows the HA CLI prompt `ha >`: type
+   the commands there **without** the leading `ha`, e.g.
    `network update enp0s3 --ipv4-method static --ipv4-address 192.168.56.50/24 --ipv4-gateway 192.168.56.1`
-   (`VBoxManage controlvm ... keyboardputstring` truncates long strings: send them in pieces).
-3. Without internet the Supervisor blocks the restore: in the **VM only** run
-   `jobs options -i internet_system -i internet_host` on the console.
-4. `HA_HOST=192.168.56.50 python ha_restore.py upload --ha-only` (add-ons need internet to be pulled).
+   (if you type them with `VBoxManage controlvm ... keyboardputstring`, long strings get truncated:
+   send them in pieces).
+3. Without internet the Supervisor blocks the restore: in the **VM only**, at the same `ha >` prompt,
+   run `jobs options -i internet_system -i internet_host`.
+4. `HA_HOST=192.168.56.50 python ha_restore.py upload --ha-only` (on Windows `set HA_HOST=...` first;
+   add-ons are left out because pulling them needs internet).
 5. Expect: upload, restore, HA back on 8123 asking for your login, `/api/onboarding` 404. Delete the VM.
 
 To test a USB stick, copy its used part to an image (read-only), convert it to VDI **with the same
@@ -127,14 +135,6 @@ the partition table) and attach it on a VirtualBox **USB** storage controller.
 
 - [Eliav2/ha-disk-swap](https://github.com/Eliav2/ha-disk-swap): an app that, while HA works, prepares a
   new disk with HAOS and your setup already restored. Complementary: it prevents, this tool recovers.
-
-## In italiano
-
-Strumento per rimettere in piedi Home Assistant OS da un altro computer quando HA non funziona:
-riavvio, ripristino dell'ultimo backup, oppure cancellazione dei dati e ripristino su un HAOS appena
-installato, con conferma (scrivendo `YES`) prima di ogni passo distruttivo. Configurazione in
-`config.ini` (copia di `config.example.ini`); chiave dei backup salvata con `save_backup_key.ps1` su
-Windows. Prima di averne bisogno, provalo in una macchina virtuale isolata come descritto sopra.
 
 ## License
 
