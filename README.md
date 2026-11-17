@@ -131,6 +131,13 @@ the partition table) and attach it on a VirtualBox **USB** storage controller.
 - **Not** tested for real: `restart`, `restore`, `reinstall` on a real box, and `upload` with apps
   (needs internet in the VM). Reports welcome.
 
+## FAQ
+
+**Do I need Claude, Codex or another AI to use it?** No. It is a plain Python script: Python 3.9+, the
+`ssh` client and the setup above are all it needs. It was written with the help of an AI coding
+assistant, and if you use one you can ask it to run the script and read the errors for you, but that
+is a convenience, not a requirement.
+
 ## Related
 
 - [Eliav2/ha-disk-swap](https://github.com/Eliav2/ha-disk-swap): an app that, while HA works, prepares a

@@ -149,6 +149,13 @@ di archiviazione **USB** di VirtualBox.
 - **Non** provati davvero: `restart`, `restore`, `reinstall` su un mini PC vero, e `upload` con le app
   (in VM serve internet). Le segnalazioni sono benvenute.
 
+## Domande frequenti
+
+**Serve Claude, Codex o un'altra AI per usarlo?** No. È un normale script Python: bastano Python 3.9 o
+successivo, il client `ssh` e la configurazione descritta sopra. È stato scritto con l'aiuto di un
+assistente AI per la programmazione, e se ne usi uno puoi chiedergli di lanciare lo script e leggere
+gli errori al posto tuo, ma è una comodità, non un requisito.
+
 ## Progetti affini
 
 - [Eliav2/ha-disk-swap](https://github.com/Eliav2/ha-disk-swap): un'app che, mentre HA funziona,
